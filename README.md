@@ -7,6 +7,18 @@ Run `claude-chat` and you get a terminal Q&A session that behaves like the Claud
 ChatGPT — but every conversation is saved as a **self-contained, locally-searchable folder**
 on your machine. No web UI, no export buttons, no paid search.
 
+## Demo
+
+A reproducible walkthrough (install → self-contained folder → markdown transcript → `search`
+recall) is scripted in [`docs/demo.tape`](docs/demo.tape); a live-session clip is recorded
+separately. See [`docs/DEMO.md`](docs/DEMO.md) to generate both.
+
+<!-- After running `vhs docs/demo.tape`, embed the surface clip here:
+![claude-chat demo](docs/demo.gif)
+and embed your recorded live session below it:
+![claude-chat live session](docs/live.gif) -->
+<!-- LIVE-SESSION PLACEHOLDER: drop docs/live.gif (recorded per docs/DEMO.md) and embed it here. -->
+
 ## What you get
 
 Each session lives in its own folder under `~/chats/`:
