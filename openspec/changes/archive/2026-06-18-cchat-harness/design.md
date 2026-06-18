@@ -7,9 +7,9 @@ We want a thin bash harness that makes Claude Code behave like the Claude deskto
 ## Goals / Non-Goals
 
 **Goals:**
-- One command (`claude-chat`) starts a general-purpose Q&A session in a fresh, topic-named folder under `~/chats/`.
+- One command (`cchat`) starts a general-purpose Q&A session in a fresh, topic-named folder under `~/chats/`.
 - Every conversation leaves behind a durable raw transcript (`transcript.jsonl`) and a greppable `transcript.md` inside its folder.
-- `claude-chat search <query>` recalls facts from past chats locally and for free.
+- `cchat search <query>` recalls facts from past chats locally and for free.
 - Transcript layout stays stable so a SQLite FTS5 index can be added later without reformatting.
 - Minimal, readable bash with explicit dependency checks and fail-fast errors.
 
@@ -41,11 +41,11 @@ Launch `claude` with an "assistant, not coding agent" framing (via `--append-sys
 - **Why**: The user wants a ChatGPT replacement, not a code agent, even though artifacts may still be written.
 - **Open**: exact flag/config surface is verified during implementation against the installed `claude` version; the framing text is small and lives in the script.
 
-### Decision: Single `claude-chat` script with subcommands
-`claude-chat` (bare) launches a session; `claude-chat search <query>` searches; `claude-chat "topic"` launches with a preset topic. Installation is a symlink onto `PATH`.
+### Decision: Single `cchat` script with subcommands
+`cchat` (bare) launches a session; `cchat search <query>` searches; `cchat "topic"` launches with a preset topic. Installation is a symlink onto `PATH`.
 
 - **Why**: One entry point mirrors the simplicity of the desktop app and keeps the surface tiny. Subcommand dispatch in bash is trivial and easy to delete.
-- **Alternatives**: separate `claude-chat` and `claude-chat-search` scripts — rejected as more files for no benefit.
+- **Alternatives**: separate `cchat` and `cchat-search` scripts — rejected as more files for no benefit.
 
 ### Decision: Session folder naming `YYYY-MM-DD-HHMM-<topic-slug>`
 Slugify the topic (lowercase, non-alphanumeric → `-`, collapse repeats, trim). Default root `~/chats/`, overridable by `CHAT_HOME`.

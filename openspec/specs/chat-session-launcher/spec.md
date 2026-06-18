@@ -8,16 +8,16 @@ Launch interactive Claude Code sessions configured as a general-purpose question
 
 ### Requirement: Launch a general-purpose chat session
 
-The `claude-chat` command SHALL launch an interactive Claude Code session configured as a general-purpose question-answering assistant rather than a coding agent.
+The `cchat` command SHALL launch an interactive Claude Code session configured as a general-purpose question-answering assistant rather than a coding agent.
 
 #### Scenario: Bare invocation starts a new session
 
-- **WHEN** the user runs `claude-chat` with no subcommand
+- **WHEN** the user runs `cchat` with no subcommand
 - **THEN** the tool prompts for a one-line topic, creates a session folder, and launches an interactive `claude` session whose working directory is that folder
 
 #### Scenario: Claude CLI is missing
 
-- **WHEN** the user runs `claude-chat` and the `claude` executable is not found on `PATH`
+- **WHEN** the user runs `cchat` and the `claude` executable is not found on `PATH`
 - **THEN** the tool prints an actionable error explaining that Claude Code must be installed and exits non-zero without creating a session folder
 
 ### Requirement: Prompt for a topic and create a self-contained session folder
@@ -36,7 +36,7 @@ On launch the tool SHALL prompt for a short topic, slugify it, and create a self
 
 #### Scenario: Topic provided as an argument
 
-- **WHEN** the user runs `claude-chat "Tax deadline questions"` with the topic as an argument
+- **WHEN** the user runs `cchat "Tax deadline questions"` with the topic as an argument
 - **THEN** the tool skips the interactive prompt and uses the argument as the topic
 
 #### Scenario: Custom chats root

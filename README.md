@@ -1,9 +1,9 @@
-# claude-chat — a local ChatGPT / Claude-desktop replacement
+# cchat — a local ChatGPT / Claude-desktop replacement
 
 > Your terminal as a private, searchable ChatGPT — every conversation saved as a local, greppable folder.
 
 A lightweight bash harness around [Claude Code](https://docs.claude.com/en/docs/claude-code).
-Run `claude-chat` and you get a terminal Q&A session that behaves like the Claude desktop app or
+Run `cchat` and you get a terminal Q&A session that behaves like the Claude desktop app or
 ChatGPT — but every conversation is saved as a **self-contained, locally-searchable folder**
 on your machine. No web UI, no export buttons, no paid search.
 
@@ -14,9 +14,9 @@ recall) is scripted in [`docs/demo.tape`](docs/demo.tape); a live-session clip i
 separately. See [`docs/DEMO.md`](docs/DEMO.md) to generate both.
 
 <!-- After running `vhs docs/demo.tape`, embed the surface clip here:
-![claude-chat demo](docs/demo.gif)
+![cchat demo](docs/demo.gif)
 and embed your recorded live session below it:
-![claude-chat live session](docs/live.gif) -->
+![cchat live session](docs/live.gif) -->
 <!-- LIVE-SESSION PLACEHOLDER: drop docs/live.gif (recorded per docs/DEMO.md) and embed it here. -->
 
 ## What you get
@@ -39,7 +39,7 @@ Because the session runs *inside* this folder, anything the assistant writes lan
 |------|-----------|---------|
 | `claude` | launching sessions | <https://docs.claude.com/en/docs/claude-code> |
 | `jq`     | rendering `transcript.md` + `meta.json` | `brew install jq` |
-| `rg` (ripgrep) | `claude-chat search` | `brew install ripgrep` |
+| `rg` (ripgrep) | `cchat search` | `brew install ripgrep` |
 
 `jq` and `rg` are only required for rendering and search respectively; the raw
 `transcript.jsonl` is always preserved even if `jq` is missing.
@@ -47,18 +47,18 @@ Because the session runs *inside* this folder, anything the assistant writes lan
 ## Install
 
 ```bash
-git clone git@github.com:Dzhuneyt/ClaudeGPT.git
-cd ClaudeGPT
-chmod +x claude-chat
-ln -s "$PWD/claude-chat" /usr/local/bin/claude-chat   # or any directory already on your PATH
+git clone git@github.com:Dzhuneyt/cchat.git
+cd cchat
+chmod +x cchat
+ln -s "$PWD/cchat" /usr/local/bin/cchat   # or any directory already on your PATH
 ```
 
 ## Usage
 
 ```bash
-claude-chat                   # prompts: "Topic for this chat:" then opens the session
-claude-chat "tax deadline"    # skip the prompt — topic preset from the argument
-claude-chat search "deadline" # ripgrep across every transcript, grouped by session
+cchat                   # prompts: "Topic for this chat:" then opens the session
+cchat "tax deadline"    # skip the prompt — topic preset from the argument
+cchat search "deadline" # ripgrep across every transcript, grouped by session
 ```
 
 End the session the way you normally exit Claude Code; the transcript is archived
@@ -73,7 +73,7 @@ automatically on exit, and the saved folder path is printed.
 
 ## How recall works
 
-`claude-chat search <query>` runs `ripgrep` over every `transcript.md` under `CHAT_HOME`,
+`cchat search <query>` runs `ripgrep` over every `transcript.md` under `CHAT_HOME`,
 printing matching lines with two lines of context, grouped under each session's path.
 That's enough to recall a fact from a past chat and then open the full transcript or folder.
 
@@ -107,5 +107,5 @@ additive: already-archived sessions remain valid input unchanged.
 - **Privacy:** transcripts are stored **in plaintext** under `~/chats/`. Don't paste anything
   you wouldn't write to a local file, and keep `~/chats/` out of any git repository.
 - **Portability:** developed and tested on macOS; runs on Linux too (needs `bash`, `jq`, and `ripgrep`).
-- **Why `claude-chat` and not `chat`?** macOS and Linux already ship a `chat` binary (the PPP
+- **Why `cchat` and not `chat`?** macOS and Linux already ship a `chat` binary (the PPP
   `chat(8)` utility) that usually wins on `PATH`, so this tool uses the unambiguous name.

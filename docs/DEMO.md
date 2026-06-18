@@ -21,7 +21,7 @@ vhs docs/demo.tape               # writes docs/demo.gif
 Then embed it at the top of the root `README.md`:
 
 ```markdown
-![claude-chat demo](docs/demo.gif)
+![cchat demo](docs/demo.gif)
 ```
 
 ## 2. Live-session clip — record it yourself (via asciinema + agg)
@@ -35,7 +35,7 @@ in real time) into a JSON `.cast`; `agg` converts that cast into a GIF.
 brew install asciinema agg                       # one-time
 
 asciinema rec docs/live.cast                      # starts recording
-#   ... in the recording, run:  claude-chat "demo question"
+#   ... in the recording, run:  cchat "demo question"
 #   ... ask a couple of things, maybe have it write a file, then exit Claude Code
 #   ... press Ctrl-D to stop recording
 

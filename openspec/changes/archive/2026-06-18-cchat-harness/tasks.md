@@ -1,6 +1,6 @@
 ## 1. Scaffolding & dependency checks
 
-- [x] 1.1 Create the `claude-chat` bash script at the repo root with `#!/usr/bin/env bash`, `set -euo pipefail`, and a subcommand dispatcher (`search` → search path; anything else / empty → launch path)
+- [x] 1.1 Create the `cchat` bash script at the repo root with `#!/usr/bin/env bash`, `set -euo pipefail`, and a subcommand dispatcher (`search` → search path; anything else / empty → launch path)
 - [x] 1.2 Add a `require_cmd` helper and pre-flight check for `claude` on the launch path; print an actionable error and exit non-zero if missing
 - [x] 1.3 Resolve the chats root from `CHAT_HOME` (default `~/chats/`) and create it if absent
 
@@ -26,17 +26,17 @@
 
 ## 5. Search subcommand
 
-- [x] 5.1 Implement `claude-chat search <query>`: require `rg`; print usage and exit non-zero when no query is given
+- [x] 5.1 Implement `cchat search <query>`: require `rg`; print usage and exit non-zero when no query is given
 - [x] 5.2 Run ripgrep across all `transcript.md` files under the chats root with surrounding context, grouped/labeled by session folder
 - [x] 5.3 Handle the no-match case (report no sessions matched, exit zero)
 
 ## 6. Documentation & install
 
-- [x] 6.1 Write `README.md`: what it is, dependencies (`claude`, `rg`, `jq`), install (symlink onto `PATH`, `chmod +x`), usage (`claude-chat`, `claude-chat "topic"`, `claude-chat search <query>`), `CHAT_HOME`, and the on-disk layout
+- [x] 6.1 Write `README.md`: what it is, dependencies (`claude`, `rg`, `jq`), install (symlink onto `PATH`, `chmod +x`), usage (`cchat`, `cchat "topic"`, `cchat search <query>`), `CHAT_HOME`, and the on-disk layout
 - [x] 6.2 Document the SQLite-FTS5-later path: the stable `transcript.md` delimiter and `meta.json` fields a future indexer relies on
 
 ## 7. Manual verification
 
 - [x] 7.1 Run an end-to-end session: launch, ask a question, have the assistant write a file, exit; verify the session folder contains the artifact, `transcript.jsonl`, `transcript.md`, and `meta.json` — verified live: session `~/chats/2026-06-18-1626-smoke-test/` contains `scratch.txt` (assistant artifact), `transcript.jsonl`, `transcript.md`, and `meta.json`
-- [x] 7.2 Run `claude-chat search` for a phrase from that session and confirm it returns the session with context
+- [x] 7.2 Run `cchat search` for a phrase from that session and confirm it returns the session with context
 - [x] 7.3 Verify dependency-missing and empty-topic edge cases behave per spec
