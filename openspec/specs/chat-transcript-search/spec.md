@@ -8,26 +8,26 @@ Search across the markdown transcripts of all archived chat sessions and report 
 
 ### Requirement: Search across all archived transcripts
 
-The `claude-chat search <query>` subcommand SHALL search the markdown transcripts of all sessions under the chats root and report which sessions match, with surrounding context.
+The `cchat search <query>` subcommand SHALL search the markdown transcripts of all sessions under the chats root and report which sessions match, with surrounding context.
 
 #### Scenario: Query matches one or more sessions
 
-- **WHEN** the user runs `claude-chat search "tax deadline"`
+- **WHEN** the user runs `cchat search "tax deadline"`
 - **THEN** the tool runs a ripgrep search across every `transcript.md` under the chats root and prints each matching session's folder along with the matching lines and surrounding context
 
 #### Scenario: Query matches nothing
 
-- **WHEN** the user runs `claude-chat search` with a query that appears in no transcript
+- **WHEN** the user runs `cchat search` with a query that appears in no transcript
 - **THEN** the tool reports that no sessions matched and exits zero
 
 #### Scenario: No query provided
 
-- **WHEN** the user runs `claude-chat search` with no query argument
+- **WHEN** the user runs `cchat search` with no query argument
 - **THEN** the tool prints usage for the search subcommand and exits non-zero
 
 #### Scenario: ripgrep is missing
 
-- **WHEN** the user runs `claude-chat search` and the `rg` executable is not found on `PATH`
+- **WHEN** the user runs `cchat search` and the `rg` executable is not found on `PATH`
 - **THEN** the tool prints an actionable error explaining that ripgrep is required for search and exits non-zero
 
 ### Requirement: Results identify the originating session

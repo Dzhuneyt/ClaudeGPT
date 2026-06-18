@@ -1,4 +1,4 @@
-# VHS tape for the claude-chat "surface" demo (install → layout → recall).
+# VHS tape for the cchat "surface" demo (install → layout → recall).
 # Renders docs/demo.gif deterministically — no live Claude session needed,
 # because it runs against the committed fixture under docs/demo-home/.
 #
@@ -14,7 +14,7 @@ Set Height 760
 Set Padding 24
 Set Theme "Catppuccin Mocha"
 
-# Put claude-chat on PATH and point it at the demo fixture (reproducible, no live API).
+# Put cchat on PATH and point it at the demo fixture (reproducible, no live API).
 Hide
 Type `export PATH="$PWD:$PATH"; export CHAT_HOME="$PWD/docs/demo-home"; clear`
 Enter
@@ -22,7 +22,7 @@ Show
 
 Type "# 1. A ChatGPT-style Q&A tool that lives in your terminal"
 Enter
-Type "claude-chat --help"
+Type "cchat --help"
 Enter
 Sleep 3s
 
@@ -46,6 +46,6 @@ Type "clear"
 Enter
 Type "# 4. Recall a fact from any past chat — free, local, instant"
 Enter
-Type `claude-chat search "Form 4868"`
+Type `cchat search "Form 4868"`
 Enter
 Sleep 4s

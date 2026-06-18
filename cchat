@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
-# claude-chat — a lightweight Claude Code harness that mimics the Claude desktop app.
+# cchat — a lightweight Claude Code harness that mimics the Claude desktop app.
 #
-# Named 'claude-chat' (not 'chat') on purpose: the system PPP utility chat(8)
+# Named 'cchat' (not 'chat') on purpose: the system PPP utility chat(8)
 # lives at /usr/sbin/chat and shadows 'chat' on a default macOS PATH.
 #
 # Launches a general-purpose Q&A session inside a fresh, self-contained folder
@@ -11,9 +11,9 @@
 # markdown transcript, so past chats can be searched locally and for free.
 #
 # Usage:
-#   claude-chat                  Start a new session (prompts for a topic)
-#   claude-chat "some topic"     Start a new session with the topic preset
-#   claude-chat search <query>   Search across all archived transcripts (ripgrep)
+#   cchat                  Start a new session (prompts for a topic)
+#   cchat "some topic"     Start a new session with the topic preset
+#   cchat search <query>   Search across all archived transcripts (ripgrep)
 #
 # Environment:
 #   CHAT_HOME             Root for session folders        (default: ~/chats)
@@ -27,7 +27,7 @@ CLAUDE_PROJECTS_DIR="${CLAUDE_PROJECTS_DIR:-$HOME/.claude/projects}"
 # Framing that turns Claude Code from a coding agent into a general assistant.
 SYSTEM_PROMPT='You are a general-purpose assistant for open-ended questions, like ChatGPT or the Claude desktop app — not a coding agent working on a software project. Answer conversationally and concisely. You may create files in the current working directory when the user explicitly wants an artifact, but default to direct answers. There is no codebase here to maintain.'
 
-err() { printf 'claude-chat: %s\n' "$*" >&2; }
+err() { printf 'cchat: %s\n' "$*" >&2; }
 die() { err "$*"; exit 1; }
 
 require_cmd() {
@@ -37,11 +37,11 @@ require_cmd() {
 
 usage() {
   cat >&2 <<'EOF'
-claude-chat — a lightweight Claude Code harness (a local ChatGPT/Claude-desktop replacement)
+cchat — a lightweight Claude Code harness (a local ChatGPT/Claude-desktop replacement)
 
-  claude-chat                  Start a new session (prompts for a topic)
-  claude-chat "some topic"     Start a new session with the topic preset
-  claude-chat search <query>   Search across all archived transcripts
+  cchat                  Start a new session (prompts for a topic)
+  cchat "some topic"     Start a new session with the topic preset
+  cchat search <query>   Search across all archived transcripts
 
 Environment:
   CHAT_HOME             Root for session folders      (default: ~/chats)
@@ -167,7 +167,7 @@ cmd_search() {
 
   local query="${1-}"
   if [[ -z "$query" ]]; then
-    err "usage: claude-chat search <query>"
+    err "usage: cchat search <query>"
     return 2
   fi
 
