@@ -1,0 +1,194 @@
+#!/usr/bin/env bash
+#
+# claude-chat — a lightweight Claude Code harness that mimics the Claude desktop app.
+#
+# Named 'claude-chat' (not 'chat') on purpose: the system PPP utility chat(8)
+# lives at /usr/sbin/chat and shadows 'chat' on a default macOS PATH.
+#
+# Launches a general-purpose Q&A session inside a fresh, self-contained folder
+# under ~/chats/. When the session ends, the conversation is archived into that
+# folder as a raw JSONL transcript (source of truth) plus a clean, greppable
+# markdown transcript, so past chats can be searched locally and for free.
+#
+# Usage:
+#   claude-chat                  Start a new session (prompts for a topic)
+#   claude-chat "some topic"     Start a new session with the topic preset
+#   claude-chat search <query>   Search across all archived transcripts (ripgrep)
+#
+# Environment:
+#   CHAT_HOME             Root for session folders        (default: ~/chats)
+#   CLAUDE_PROJECTS_DIR   Where Claude Code stores logs   (default: ~/.claude/projects)
+
+set -euo pipefail
+
+CHAT_HOME="${CHAT_HOME:-$HOME/chats}"
+CLAUDE_PROJECTS_DIR="${CLAUDE_PROJECTS_DIR:-$HOME/.claude/projects}"
+
+# Framing that turns Claude Code from a coding agent into a general assistant.
+SYSTEM_PROMPT='You are a general-purpose assistant for open-ended questions, like ChatGPT or the Claude desktop app — not a coding agent working on a software project. Answer conversationally and concisely. You may create files in the current working directory when the user explicitly wants an artifact, but default to direct answers. There is no codebase here to maintain.'
+
+err() { printf 'claude-chat: %s\n' "$*" >&2; }
+die() { err "$*"; exit 1; }
+
+require_cmd() {
+  # $1 = command, $2 = install hint
+  command -v "$1" >/dev/null 2>&1 || die "required command '$1' not found on PATH. $2"
+}
+
+usage() {
+  cat >&2 <<'EOF'
+claude-chat — a lightweight Claude Code harness (a local ChatGPT/Claude-desktop replacement)
+
+  claude-chat                  Start a new session (prompts for a topic)
+  claude-chat "some topic"     Start a new session with the topic preset
+  claude-chat search <query>   Search across all archived transcripts
+
+Environment:
+  CHAT_HOME             Root for session folders      (default: ~/chats)
+  CLAUDE_PROJECTS_DIR   Claude Code session storage   (default: ~/.claude/projects)
+EOF
+}
+
+# Lowercase, non-alphanumeric -> '-', collapse/trim dashes, cap length, fall back to 'untitled'.
+slugify() {
+  local s
+  s="$(printf '%s' "${1-}" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//')"
+  s="${s:0:60}"
+  s="${s%-}"
+  printf '%s' "${s:-untitled}"
+}
+
+# Mirror Claude Code's per-project dir slug: absolute path with '/' and '.' -> '-'.
+project_slug_for() {
+  printf '%s' "$1" | sed 's/[/.]/-/g'
+}
+
+# Render a clean conversational markdown transcript from the raw JSONL.
+# Keeps only user/assistant text turns, in order; skips meta, thinking, tool_use,
+# and tool_result events. Each turn gets a stable, parseable delimiter line so a
+# future indexer (e.g. SQLite FTS5) can split turns without re-parsing the JSONL.
+render_markdown() {
+  local src="$1" out="$2"
+  jq -r '
+    select(.type=="user" or .type=="assistant")
+    | select((.isMeta // false) | not)
+    | (.message.role // .type) as $role
+    | (.timestamp // "") as $ts
+    | (if (.message.content | type) == "string"
+         then .message.content
+         else ([.message.content[]? | select(.type=="text") | .text] | join("\n"))
+       end) as $raw
+    | select(($raw | type) == "string")
+    | ($raw | gsub("^[[:space:]]+"; "") | gsub("[[:space:]]+$"; "")) as $text
+    | select($text | length > 0)
+    | "## [\($role)] \($ts)\n\n\($text)\n"
+  ' "$src" > "$out"
+}
+
+# Locate the session JSONL, copy it in as transcript.jsonl, render transcript.md,
+# and write meta.json. Never hard-fails the command — a session that cannot be
+# archived still leaves its folder intact (with a warning).
+archive_session() {
+  local session_dir="$1" topic="$2" slug="$3" created_iso="$4" start_marker="$5"
+  local proj_dir jsonl=""
+
+  proj_dir="$CLAUDE_PROJECTS_DIR/$(project_slug_for "$session_dir")"
+
+  # Primary: the session folder is unique, so its project dir holds only this chat.
+  if [[ -d "$proj_dir" ]]; then
+    jsonl="$(ls -t "$proj_dir"/*.jsonl 2>/dev/null | head -n1 || true)"
+  fi
+
+  # Fallback: newest JSONL anywhere that was written after we launched.
+  if [[ -z "$jsonl" ]]; then
+    jsonl="$(find "$CLAUDE_PROJECTS_DIR" -name '*.jsonl' -newer "$start_marker" -print0 2>/dev/null \
+              | xargs -0 ls -t 2>/dev/null | head -n1 || true)"
+  fi
+
+  if [[ -z "$jsonl" || ! -f "$jsonl" ]]; then
+    err "no transcript JSONL found for session at $session_dir (raw log not archived)"
+    return 0
+  fi
+
+  cp "$jsonl" "$session_dir/transcript.jsonl"
+
+  if command -v jq >/dev/null 2>&1; then
+    render_markdown "$session_dir/transcript.jsonl" "$session_dir/transcript.md" \
+      || err "failed to render transcript.md (raw transcript.jsonl preserved)"
+    jq -n --arg topic "$topic" --arg slug "$slug" --arg created "$created_iso" --arg source "$jsonl" \
+      '{topic:$topic, slug:$slug, created:$created, source_jsonl:$source}' \
+      > "$session_dir/meta.json"
+  else
+    err "jq not found; skipped transcript.md (raw transcript.jsonl preserved)"
+    printf '{"topic":"%s","slug":"%s","created":"%s","source_jsonl":"%s"}\n' \
+      "$topic" "$slug" "$created_iso" "$jsonl" > "$session_dir/meta.json"
+  fi
+}
+
+cmd_launch() {
+  require_cmd claude "Install Claude Code: https://docs.claude.com/en/docs/claude-code"
+  mkdir -p "$CHAT_HOME"
+
+  local topic="${1-}"
+  if [[ -z "$topic" ]]; then
+    printf 'Topic for this chat: ' >&2
+    IFS= read -r topic || topic=""
+  fi
+
+  local slug stamp created_iso session_dir start_marker
+  slug="$(slugify "$topic")"
+  stamp="$(date +%Y-%m-%d-%H%M)"
+  created_iso="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  session_dir="$CHAT_HOME/$stamp-$slug"
+  mkdir -p "$session_dir"
+
+  # Reference point for the archival fallback (its mtime == launch time).
+  start_marker="$(mktemp)"
+
+  # cwd == session_dir so any files the assistant writes land inside the folder,
+  # and Claude Code's per-project log keys off this unique path. '|| true' so a
+  # non-zero exit (e.g. Ctrl-C) still lets us archive.
+  ( cd "$session_dir" && claude --append-system-prompt "$SYSTEM_PROMPT" ) || true
+
+  archive_session "$session_dir" "$topic" "$slug" "$created_iso" "$start_marker"
+  rm -f "$start_marker"
+
+  printf 'Session saved: %s\n' "$session_dir" >&2
+}
+
+cmd_search() {
+  require_cmd rg "Install ripgrep: https://github.com/BurntSushi/ripgrep#installation"
+
+  local query="${1-}"
+  if [[ -z "$query" ]]; then
+    err "usage: claude-chat search <query>"
+    return 2
+  fi
+
+  if [[ ! -d "$CHAT_HOME" ]]; then
+    printf 'No chats found under %s\n' "$CHAT_HOME"
+    return 0
+  fi
+
+  # --heading groups matches under each session's transcript.md path.
+  if rg --heading --line-number --color=auto --context 2 \
+        --glob '**/transcript.md' -- "$query" "$CHAT_HOME"; then
+    return 0
+  fi
+  printf 'No sessions matched: %s\n' "$query"
+  return 0
+}
+
+main() {
+  local sub="${1-}"
+  case "$sub" in
+    search)        shift; cmd_search "$@" ;;
+    -h|--help|help) usage ;;
+    *)             cmd_launch "$@" ;;
+  esac
+}
+
+# Allow sourcing (for testing helpers) without running.
+if [[ "${BASH_SOURCE[0]:-}" == "${0}" ]]; then
+  main "$@"
+fi
