@@ -65,8 +65,10 @@ project_slug_for() {
 
 # Render a clean conversational markdown transcript from the raw JSONL.
 # Keeps only user/assistant text turns, in order; skips meta, thinking, tool_use,
-# and tool_result events. Each turn gets a stable, parseable delimiter line so a
-# future indexer (e.g. SQLite FTS5) can split turns without re-parsing the JSONL.
+# and tool_result events, plus slash-command artifacts (e.g. /exit and its
+# <command-*>/<local-command-*> wrappers) that aren't real conversation. Each turn
+# gets a stable, parseable delimiter line so a future indexer (e.g. SQLite FTS5)
+# can split turns without re-parsing the JSONL.
 render_markdown() {
   local src="$1" out="$2"
   jq -r '
@@ -81,6 +83,7 @@ render_markdown() {
     | select(($raw | type) == "string")
     | ($raw | gsub("^[[:space:]]+"; "") | gsub("[[:space:]]+$"; "")) as $text
     | select($text | length > 0)
+    | select($text | test("^<(command-|local-command-)") | not)
     | "## [\($role)] \($ts)\n\n\($text)\n"
   ' "$src" > "$out"
 }

@@ -1,5 +1,7 @@
 # claude-chat — a local ChatGPT / Claude-desktop replacement
 
+> Your terminal as a private, searchable ChatGPT — every conversation saved as a local, greppable folder.
+
 A lightweight bash harness around [Claude Code](https://docs.claude.com/en/docs/claude-code).
 Run `claude-chat` and you get a terminal Q&A session that behaves like the Claude desktop app or
 ChatGPT — but every conversation is saved as a **self-contained, locally-searchable folder**
@@ -32,16 +34,12 @@ Because the session runs *inside* this folder, anything the assistant writes lan
 
 ## Install
 
-The command is named `claude-chat` on purpose. The name `chat` is already taken by
-the system PPP utility `chat(8)` at `/usr/sbin/chat`, which sits ahead of `/usr/local/bin`
-on a default macOS `PATH` — so a tool named `chat` gets silently shadowed and never runs.
-
 ```bash
+git clone git@github.com:Dzhuneyt/ClaudeGPT.git
+cd ClaudeGPT
 chmod +x claude-chat
 ln -s "$PWD/claude-chat" /usr/local/bin/claude-chat   # or any directory already on your PATH
 ```
-
-If you previously symlinked an earlier version as `chat`, remove it: `rm /usr/local/bin/chat`.
 
 ## Usage
 
@@ -94,3 +92,8 @@ additive: already-archived sessions remain valid input unchanged.
   (tracked in the design doc) is to land the transcript in the folder in real time.
 - `transcript.md` intentionally omits tool calls and the model's internal "thinking" to stay
   conversational and greppable. The raw `transcript.jsonl` keeps everything if you need it.
+- **Privacy:** transcripts are stored **in plaintext** under `~/chats/`. Don't paste anything
+  you wouldn't write to a local file, and keep `~/chats/` out of any git repository.
+- **Portability:** developed and tested on macOS; runs on Linux too (needs `bash`, `jq`, and `ripgrep`).
+- **Why `claude-chat` and not `chat`?** macOS and Linux already ship a `chat` binary (the PPP
+  `chat(8)` utility) that usually wins on `PATH`, so this tool uses the unambiguous name.
