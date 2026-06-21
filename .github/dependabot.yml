@@ -1,0 +1,13 @@
+version: 2
+updates:
+  # cchat has no package manifest (it's a single bash script), so the only
+  # dependency surface is the GitHub Actions used in CI. Keep those pinned
+  # action SHAs current.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "ci"
+    labels:
+      - "dependencies"

@@ -1,5 +1,9 @@
 # cchat — a local ChatGPT / Claude-desktop replacement
 
+[![shellcheck](https://github.com/Dzhuneyt/cchat/actions/workflows/shellcheck.yml/badge.svg)](https://github.com/Dzhuneyt/cchat/actions/workflows/shellcheck.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+![Shell](https://img.shields.io/badge/shell-bash-4EAA25?logo=gnu-bash&logoColor=white)
+
 > Your terminal as a private, searchable ChatGPT — every conversation saved as a local, greppable folder.
 
 A lightweight bash harness around [Claude Code](https://docs.claude.com/en/docs/claude-code).
@@ -109,3 +113,38 @@ additive: already-archived sessions remain valid input unchanged.
 - **Portability:** developed and tested on macOS; runs on Linux too (needs `bash`, `jq`, and `ripgrep`).
 - **Why `cchat` and not `chat`?** macOS and Linux already ship a `chat` binary (the PPP
   `chat(8)` utility) that usually wins on `PATH`, so this tool uses the unambiguous name.
+
+## Development
+
+`cchat` is a single self-contained bash script — no build step. After cloning:
+
+```bash
+chmod +x cchat
+./cchat --help
+```
+
+The script is written to be **source-able** without running `main` (it guards on
+`BASH_SOURCE`), so helper functions can be exercised in isolation:
+
+```bash
+source ./cchat
+slugify "Tax deadline questions"   # -> tax-deadline-questions
+```
+
+Linting matches CI — run [ShellCheck](https://www.shellcheck.net/) before opening a PR:
+
+```bash
+shellcheck cchat
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full contributor guide.
+
+## Security
+
+Found a vulnerability? Please report it privately — see [SECURITY.md](SECURITY.md). Do not
+open a public issue for security problems. Also note the plaintext-transcript privacy caveat
+under [Notes](#notes).
+
+## License
+
+[MIT](LICENSE) © Dzhuneyt
