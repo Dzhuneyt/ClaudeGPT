@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/hero-image.png" alt="cchat — your terminal as a private, searchable ChatGPT" width="100%">
+</p>
+
 # cchat — a local ChatGPT / Claude-desktop replacement
 
 [![shellcheck](https://github.com/Dzhuneyt/cchat/actions/workflows/shellcheck.yml/badge.svg)](https://github.com/Dzhuneyt/cchat/actions/workflows/shellcheck.yml)
