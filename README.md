@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/hero-image.png" alt="cchat — your terminal as a private, searchable ChatGPT" width="100%">
+  <img src="assets/hero-image.webp" alt="cchat — your terminal as a private, searchable ChatGPT" width="100%">
 </p>
 
 # cchat — a local ChatGPT / Claude-desktop replacement
