@@ -15,6 +15,24 @@ Run `cchat` and you get a terminal Q&A session that behaves like the Claude desk
 ChatGPT — but every conversation is saved as a **self-contained, locally-searchable folder**
 on your machine. No web UI, no export buttons, no paid search.
 
+## Why cchat exists
+
+Two everyday frustrations with the web and desktop chat apps:
+
+- **Power without the friction.** The ChatGPT and Claude web/desktop apps run in a locked-down
+  sandbox — no real CLI, no arbitrary bash, no touching your OS. Claude Code in the terminal is
+  the opposite: it leverages almost the whole OS and uses tools freely, but it's built for
+  developers and feels geeky next to opening a chat in a browser. cchat is the deliberate middle
+  ground — the powerful tool wrapped in a friendlier session. (It's a terminal harness today; a
+  lightweight web frontend may come later.)
+- **History you can actually own.** In the web apps, organizing or purging chats means clicking
+  through them one at a time — search exists, but anything beyond it is manual. cchat stores every
+  conversation as a plaintext folder on your disk, so your history is yours to grep, script, and
+  automate: search past chats, reflect on them, and spot patterns in how you work — no export
+  button required.
+
+In short: **private**, **greppable**, **zero lock-in**.
+
 ## Demo
 
 A reproducible walkthrough (install → self-contained folder → markdown transcript → `search`
