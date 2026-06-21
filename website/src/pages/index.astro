@@ -5,11 +5,18 @@ const repo = 'https://github.com/Dzhuneyt/cchat';
 const readme = 'https://github.com/Dzhuneyt/cchat#readme';
 const license = 'https://github.com/Dzhuneyt/cchat/blob/main/LICENSE';
 const claudeCode = 'https://docs.claude.com/en/docs/claude-code';
+const siteUrl = 'https://cchat.dzhuneyt.com';
 
 const title = 'cchat — your terminal as a private, searchable ChatGPT';
+// SEO description: kept to ~150-160 chars so Google doesn't truncate it.
 const description =
-  'cchat is a lightweight bash harness around Claude Code. Run it for a terminal Q&A session that behaves like the Claude desktop app or ChatGPT — but every conversation is saved as a self-contained, locally-searchable folder on your machine.';
-const ogImage = `${repo.replace('github.com', 'raw.githubusercontent.com')}/main/assets/hero-image.webp`;
+  'cchat is a lightweight bash harness around Claude Code: a terminal Q&A session like ChatGPT, with every conversation saved as a locally-searchable folder.';
+// Social description: kept to ~120 chars so og/twitter previews don't truncate on mobile.
+const socialDescription =
+  'A bash harness around Claude Code — terminal Q&A like ChatGPT, with every chat saved as a searchable local folder.';
+// Absolute, publicly reachable image served from the canonical site (1376x768, > 1200x630).
+const ogImage = `${siteUrl}/hero-image.webp`;
+const ogImageAlt = 'cchat terminal screenshot — a private, searchable ChatGPT in your terminal';
 
 const features = [
   {
@@ -41,20 +48,29 @@ const features = [
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0d1117" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={siteUrl} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
     <!-- Open Graph / social -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="cchat" />
     <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
+    <meta property="og:description" content={socialDescription} />
+    <meta property="og:url" content={siteUrl} />
     <meta property="og:image" content={ogImage} />
-    <meta property="og:url" content={repo} />
+    <meta property="og:image:width" content="1376" />
+    <meta property="og:image:height" content="768" />
+    <meta property="og:image:alt" content={ogImageAlt} />
+
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
+    <meta name="twitter:description" content={socialDescription} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
