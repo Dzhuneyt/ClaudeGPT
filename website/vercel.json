@@ -4,5 +4,13 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "cchat-website.vercel.app" }],
+      "destination": "https://cchat.dzhuneyt.com/:path*",
+      "permanent": true
+    }
+  ]
 }

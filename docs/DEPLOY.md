@@ -19,6 +19,11 @@ the only remaining steps are the ones that require the Vercel account and the
   - `buildCommand: npm run build`
   - `outputDirectory: dist`
   - `cleanUrls: true`, `trailingSlash: false`
+  - a host-conditional `redirects` rule that 301-redirects the raw
+    `cchat-website.vercel.app` host to the canonical `cchat.dzhuneyt.com`
+    (the `has` host condition scopes it to the `.vercel.app` alias only, so it
+    never loops on the custom domain). Deployment-specific
+    `cchat-website-<hash>.vercel.app` preview URLs are intentionally not caught.
 - `npm run build` is verified green and emits `website/dist/` (static HTML +
   hashed assets).
 
