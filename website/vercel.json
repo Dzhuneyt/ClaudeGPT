@@ -7,6 +7,12 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/",
+      "has": [{ "type": "host", "value": "cchat-website.vercel.app" }],
+      "destination": "https://cchat.dzhuneyt.com/",
+      "permanent": true
+    },
+    {
       "source": "/:path*",
       "has": [{ "type": "host", "value": "cchat-website.vercel.app" }],
       "destination": "https://cchat.dzhuneyt.com/:path*",
