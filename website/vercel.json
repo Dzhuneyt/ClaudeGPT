@@ -10,13 +10,13 @@
       "source": "/",
       "has": [{ "type": "host", "value": "cchat-website.vercel.app" }],
       "destination": "https://cchat.dzhuneyt.com/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/:path*",
       "has": [{ "type": "host", "value": "cchat-website.vercel.app" }],
       "destination": "https://cchat.dzhuneyt.com/:path*",
-      "permanent": true
+      "statusCode": 301
     }
   ]
 }
